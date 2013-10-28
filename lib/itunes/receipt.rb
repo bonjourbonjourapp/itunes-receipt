@@ -3,15 +3,16 @@ require 'itunes'
 module Itunes
   class Receipt
     class VerificationFailed < StandardError
-      attr_reader :status
+      attr_reader :status, :data
       def initialize(attributes = {})
+        @data   = attributes
         @status = attributes[:status]
         super attributes[:exception]
       end
     end
 
     class SandboxReceiptReceived < VerificationFailed; end;
-    
+
     class ReceiptServerOffline < VerificationFailed; end;
 
     class ExpiredReceiptReceived < VerificationFailed
@@ -23,9 +24,10 @@ module Itunes
     end
 
     # expires_date, receipt_data, and latest (receipt) will only appear for autorenew subscription products
-    attr_reader :quantity, :product_id, :transaction_id, :purchase_date, :app_item_id, :version_external_identifier, :bid, :bvrs, :original, :expires_date, :receipt_data, :latest, :itunes_env
+    attr_reader :quantity, :product_id, :transaction_id, :purchase_date, :app_item_id, :version_external_identifier, :bid, :bvrs, :original, :expires_date, :receipt_data, :latest, :itunes_env, :data
 
     def initialize(attributes = {})
+      @data = attributes
       receipt_attributes = attributes.with_indifferent_access[:receipt]
       if receipt_attributes[:quantity]
         @quantity = receipt_attributes[:quantity].to_i
